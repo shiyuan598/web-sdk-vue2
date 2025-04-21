@@ -45,11 +45,16 @@
           >
           </el-input>
           <el-input v-model="vc" placeholder="变声"></el-input>
+          <el-input v-model.number="emotion" placeholder="情感系数"></el-input>
           <el-button style="margin: 0px" @click="writeText()" type="primary"
             >文本驱动</el-button
           >
           <el-button style="margin: 0px" @click="interrupt()" type="primary"
             >打断</el-button
+          >
+          <el-input v-model="action" placeholder="执行动作"></el-input>
+          <el-button style="margin: 0px" @click="writeCmd()" type="primary"
+            >执行动作</el-button
           >
           <el-button
             style="margin: 0px"
@@ -74,8 +79,9 @@
         </el-row>
       </el-aside>
 
-      <el-main style="padding: 0px">
-        <div id="wrapper"></div>
+      <el-main class="htmleaf-content" style="padding: 0px">
+        <div class="weather rain" id="wrapper"></div>
+        <span>透明度</span><input type="range" id="opacityRange" min="0" max="1" step="0.1" value="1">
       </el-main>
 
       <!--SetApiInfo悬浮框-->
@@ -229,6 +235,14 @@
             ></el-input>
             <span>必填</span>
           </el-form-item>
+          <el-form-item label="情感">
+            <el-input
+              class="widthclass"
+              v-model.number="setglobalparamsform.tts.emotion"
+              autocomplete="on"
+              placeholder="到交互平台-接口服务-声音列表中获取id"
+            ></el-input>
+          </el-form-item>
           <el-form-item label="是否开启字幕">
             <el-radio-group v-model="setglobalparamsform.subtitle.subtitle">
               <el-radio :label="1">开启</el-radio>
@@ -279,75 +293,82 @@
 </template>
 
 <script>
+//模块导入
 import AvatarPlatform, {
   PlayerEvents,
   SDKEvents,
-} from "../vm-sdk/avatar-sdk-web_3.1.2.1002/index.js";
+} from "../vm-sdk/avatar-sdk-web_3.1.1.1011/index.js";
+
+//动态虚拟人调节透明度
+document.addEventListener("DOMContentLoaded",function(){
+    const div = document.getElementById('wrapper');
+    const range = document.getElementById('opacityRange');
+
+    range.addEventListener('input', function () {
+      div.style.opacity = this.value;
+    });
+})
+
 let avatarPlatform2 = null;
 let recorder = null;
 export default {
   name: "avatarComponent",
   data() {
     return {
-      stream: {
-        protocol: "xrtc",
-        alpha: false,
-      },
-      avatar: {
-        avatar_id: "130907001",
-      },
-      tts: {
-        vcn: "x4_lingxiaoqi_assist",
-      },
       SetApiInfodialog: false,
       SetGlobalParamsdialog: false,
       form: {
-        appid: "c8224d46",
-        apikey: "ee158cb8c4783636496edadfabba8fa8",
-        apisecret: "ZWY3N2E2N2M3OTMwMDhjN2M4MmFmNDA2",
-        sceneid: "77213753883627520",
-        serverurl: "wss://avatar.cn-huadong-1.xf-yun.com/v1/interact",
+        appid: "c8224d46",//到交互平台-接口服务中获取
+        apikey: "ee158cb8c4783636496edadfabba8fa8",//到交互平台-接口服务中获取
+        apisecret: "ZWY3N2E2N2M3OTMwMDhjN2M4MmFmNDA2",//到交互平台-接口服务中获取
+        sceneid: "77213753883627520",//到交互平台-接口服务中获取，即"接口服务ID"
+        serverurl: "wss://avatar.cn-huadong-1.xf-yun.com/v1/interact",//接口地址，无需更改
       },
       setglobalparamsform: {
         stream: {
-          protocol: "webrtc",
-          fps: 25,
-          bitrate: 1000000,
-          alpha: false,
+          protocol: "xrtc",//（必传）实时视频协议，支持webrtc/xrtc/rtmp，其中只有xrtc支持透明背景，需参数alpha传1
+          fps: 25,//（非必传）视频刷新率,值越大，越流畅，取值范围0-25，默认25即可
+          bitrate: 1000000,//（非必传）视频码率，值越大，越清晰，对网络要求越高，默认1000000即可
+          alpha: false,//（非必传）是否开启透明背景，0关闭1开始，需配合protocol=xrtc使用
         },
         avatar: {
-          avatar_id: "110117005",
-          width: 1080,
-          height: 1920,
-          mask_region: "[0,0,1080,1920]",
-          scale: 1,
-          move_h: 0,
-          move_v: 0,
-          audio_format: 1,
+          avatar_id: "110117005",//（必传）授权的形象资源id，请到交互平台-接口服务-形象列表中获取
+          width: 1080,//（非必传）视频分辨率宽（不是画布的宽，调整画布大小需调整名为wrapper的div宽）
+          height: 1920,//（非必传）视频分辨率高（不是画布的高，调整画布大小需调整名为wrapper的div高）
+          mask_region: "[0,0,1080,1920]",//（非必传）形象裁剪参数，[从左到右，从上到下，从右到左，从下到上]
+          scale: 1,//（非必传）形象缩放比例，取值范围0.1-1
+          move_h: 0,//（非必传）形象左右移动
+          move_v: 0,//（非必传）形象上下移动
+          audio_format: 1,//（非必传）音频采样率，传1即可
         },
         tts: {
-          vcn: "x4_lingxiaoying_assist",
-          speed: 50,
-          pitch: 50,
-          volume: 100,
+          vcn: "x4_lingxiaoying_assist",//（必传）授权的声音资源id，请到交互平台-接口服务-声音列表中获取
+          speed: 50,//（非必传）语速
+          pitch: 50,//（非必传）语调
+          volume: 100,//（非必传）音量
+          emotion:13,//（非必传）情感系数，仅带有情感能力的超拟人音色支持该能力，普通音色不支持
         },
         avatar_dispatch: {
-          interactive_mode: 1,
+          interactive_mode: 1,//（非必传）0追加模式，1打断模式
         },
         subtitle:{
-          subtitle:1,
-          font_color:"#FFFFFF",
-          font_name:"Sanji.Suxian.Simple",
-          position_x:100,
-          position_y:0,
-          font_size:10,
-          width:100,
-          height:100,
+          subtitle:1,//（非必传）开启字幕，2D形象支持字幕，透明背景不支持字幕，3D形象不支持字幕（3D形象多为卡通形象，2D多为真人形象）
+          font_color:"#FFFFFF",//（非必传）字体颜色
+          font_name:"Sanji.Suxian.Simple",//（非必传）不支持自定义字体，若不想使用默认提供的
+          //字体，那么可以设置asr和nlp监听事件，去获取语音识别和语义理解的文本，自己前端贴字体。
+          //支持一下字体：'Sanji.Suxian.Simple','Honglei.Runninghand.Sim','Hunyuan.Gothic.Bold',
+          //'Huayuan.Gothic.Regular','mainTitle'
+          position_x:100,//（非必传）设置字幕水平位置，必须配置width、height一起使用，否则字幕不显示
+          position_y:0,//（非必传）设置字幕竖向位置，必须配置width、height一起使用，否则字幕不显示
+          font_size:10,//（非必传）设置字幕字体大小，取值范围：1-10
+          width:100,//（非必传）设置字幕宽
+          height:100,//（非必传）设置字幕高
         },
         enable:false,//demo中用来控制是否开启背景的参数，与虚拟人参数无关
         background: {
-          type: "res_key",
+          type: "res_key",//（非必传）上传图片的类型，支持url以及res_key。（res_key请到交互平台-素材管理-背景中上传获取)
           data: "22SLM2teIw+aqR6Xsm2JbH6Ng310kDam2NiCY/RQ9n6dw47gMO+7gGUJfWWfkqD3IxsU/HMK1uJTTxxF2llcKSM4dlSdBy0Piag/DndHocqs32kTOwXUw6lkyggYQBXF0uwTv9jVFm1ZjZgSehV3kpx5RTvizZ9MqEI8lotCRvokC9HLI0pGfKtSmlKgCKL+OUoc9QI5HW3wLtYbLersumd4UCKEPk/uWAdKEh4ntSJiW2km8waGFsg/VSNFj5vaDK3LC4PxfsRvi1a2veZW7JUs/VOleE9wwgTH+A/oqPPcyksBY7aQ4TxYjvS9Qj9LtXkvOwttQMgPGwoxlqBEBhR/xLUwmecHkHzgjACFtxE=",
+          //（非必传）图片的值，当type='url'时,data='http://xxx/xxx.png'，当type='res_key'时，data='res_key值'（res_key请到交互平台-素材管理-背景中上传获取)
         }
       },
       formLabelWidth: "120px",
@@ -355,6 +376,9 @@ export default {
       vc: "",
       recorderbutton: false,
       nlp: false,
+      emotion:0,
+      action:"A_RH_hello_O",
+      volume:100,
     };
   },
   methods: {
@@ -459,6 +483,7 @@ export default {
           console.log(
             "playNotAllowed：触发了游览器限制自动播放策略，播放前必须与游览器产生交互（例如点击页面或者dom组件），触发该事件后调用avatarPlatform2.player.resume()方法来接触限制"
           );
+          player.resume();
         });
       this.open2("监听播放器事件成功");
       }else{
@@ -534,6 +559,7 @@ export default {
           tts: {
             vcn:this.vc,//变声
             volume: 100,
+            emotion:this.emotion,
           },
         });
       }else {
@@ -543,6 +569,9 @@ export default {
         alert("请先实例化SDK")
       }
 
+    },
+    writeCmd(){
+      avatarPlatform2.writeCmd("action",this.action);
     },
     interrupt(){
       if(avatarPlatform2 != null){
@@ -599,9 +628,12 @@ export default {
       });
     },
   },
-  destroyed(){
+
+  beforeDestroy(){
     //关闭页面时调用stop协议，确保链接断开，释放资源
-    avatarPlatform2.stop();
+    if(avatarPlatform2){
+      avatarPlatform2.stop();
+    }
   }
 };
 </script>

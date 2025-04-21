@@ -20,6 +20,7 @@ export default ({
     methods:{
         //设置监听事件，有助于观察播放阶段
     play(){
+        player.resume();
         player?.on("play",function(){
             console.log("play事件")
         })
@@ -36,25 +37,24 @@ export default ({
             console.log("触发游览器限制播放策略，播放前必须要先与游览器产生交互（例如点击页面或者dom组件),触发该事件后去调用resume（）方法解除限制")
             player.resume();
         });
-
         //XRTC协议设置参数如下：
-        player.playerType = 12;
-        player.stream = {
-            sid:"vms000ec4da@dx195f094539d6f19882",
-            server:"https://xrtc-cn-east-2.xf-yun.com",
-            auth:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxMDAwMDAwMDAxIiwidGltZSI6MTY0ODAxODQ2MTU0MywiaWF0IjoxNjQ4MTkxMjQyfQ.CTcOh_kCLqvvglo5VLVnjgpZzoFpzk7Un3Et0c9dhUs",
-            appid:"1000000001",
-            userId:"123123123",
-            roomId:"ase0001bbe2hu19632f0f6070442142",
-            timeStr:"123412341324",
-        }
+        // player.playerType = 12;
+        // player.stream = {
+        //     sid:"vms000ec4da@dx195f094539d6f19882",
+        //     server:"https://xrtc-cn-east-2.xf-yun.com",
+        //     auth:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxMDAwMDAwMDAxIiwidGltZSI6MTY0ODAxODQ2MTU0MywiaWF0IjoxNjQ4MTkxMjQyfQ.CTcOh_kCLqvvglo5VLVnjgpZzoFpzk7Un3Et0c9dhUs",
+        //     appid:"1000000001",
+        //     userId:"123123123",
+        //     roomId:"ase0001bbe2hu19632f0f6070442142",
+        //     timeStr:"123412341324",
+        // }
 
         //WebRtc协议设置参数如下：
-        // player.playerType = 6;
-        // player.stream = {
-        //     sid:"e754f25f-509d-ee77-29f9-4e4b567597e1",
-        //     streamUrl:"webrtc://srs-stream.cn-huadong-1.xf-yun.com:19850/live/a78ca3f0?stream=a78ca3f0"
-        // }
+        player.playerType = 6;
+        player.stream = {
+            sid:"e754f25f-509d-ee77-29f9-4e4b567597e1",
+            streamUrl:"webrtc://srs-stream.cn-huadong-1.xf-yun.com:19850/live/a78ca3f0?stream=a78ca3f0"
+        }
 
         //VideSize的宽高需与虚拟人保持一致
         player.videoSize = { 
