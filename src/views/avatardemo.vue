@@ -318,10 +318,10 @@ export default {
       SetApiInfodialog: false,
       SetGlobalParamsdialog: false,
       form: {
-        appid: "c8224d46",//到交互平台-接口服务中获取
-        apikey: "ee158cb8c4783636496edadfabba8fa8",//到交互平台-接口服务中获取
-        apisecret: "ZWY3N2E2N2M3OTMwMDhjN2M4MmFmNDA2",//到交互平台-接口服务中获取
-        sceneid: "77213753883627520",//到交互平台-接口服务中获取，即"接口服务ID"
+        appid: "",//到交互平台-接口服务中获取
+        apikey: "",//到交互平台-接口服务中获取
+        apisecret: "",//到交互平台-接口服务中获取
+        sceneid: "",//到交互平台-接口服务中获取，即"接口服务ID"
         serverurl: "wss://avatar.cn-huadong-1.xf-yun.com/v1/interact",//接口地址，无需更改
       },
       setglobalparamsform: {
