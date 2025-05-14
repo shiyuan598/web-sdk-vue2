@@ -329,7 +329,7 @@ export default {
           protocol: "xrtc",//（必传）实时视频协议，支持webrtc/xrtc/rtmp，其中只有xrtc支持透明背景，需参数alpha传1
           fps: 25,//（非必传）视频刷新率,值越大，越流畅，取值范围0-25，默认25即可
           bitrate: 1000000,//（非必传）视频码率，值越大，越清晰，对网络要求越高，默认1000000即可
-          alpha: false,//（非必传）是否开启透明背景，0关闭1开始，需配合protocol=xrtc使用
+          alpha: true,//（非必传）是否开启透明背景，0关闭1开始，需配合protocol=xrtc使用
         },
         avatar: {
           avatar_id: "110117005",//（必传）授权的形象资源id，请到交互平台-接口服务-形象列表中获取
@@ -353,7 +353,7 @@ export default {
         },
         subtitle:{
           subtitle:1,//（非必传）开启字幕，2D形象支持字幕，透明背景不支持字幕，3D形象不支持字幕（3D形象多为卡通形象，2D多为真人形象）
-          font_color:"#FFFFFF",//（非必传）字体颜色
+          font_color:"#709b9c",//（非必传）字体颜色
           font_name:"Sanji.Suxian.Simple",//（非必传）不支持自定义字体，若不想使用默认提供的
           //字体，那么可以设置asr和nlp监听事件，去获取语音识别和语义理解的文本，自己前端贴字体。
           //支持一下字体：'Sanji.Suxian.Simple','Honglei.Runninghand.Sim','Hunyuan.Gothic.Bold',
@@ -374,7 +374,7 @@ export default {
       formLabelWidth: "120px",
       textarea: "",
       vc: "",
-      recorderbutton: false,
+      recorderbutton: true,
       nlp: true,
       emotion:0,
       action:"A_RH_hello_O",
