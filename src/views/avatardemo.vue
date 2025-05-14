@@ -318,10 +318,10 @@ export default {
       SetApiInfodialog: false,
       SetGlobalParamsdialog: false,
       form: {
-        appid: "",//到交互平台-接口服务中获取
-        apikey: "",//到交互平台-接口服务中获取
-        apisecret: "",//到交互平台-接口服务中获取
-        sceneid: "",//到交互平台-接口服务中获取，即"接口服务ID"
+        appid: "e76cbde9",//到交互平台-接口服务中获取
+        apikey: "302c37e7e091f21b9e538aa6669c55c4",//到交互平台-接口服务中获取
+        apisecret: "OWU4NGY1MWI3OGM1MWY0NmUzYjFlNzAy",//到交互平台-接口服务中获取
+        sceneid: "180957947050987520",//到交互平台-接口服务中获取，即"接口服务ID"
         serverurl: "wss://avatar.cn-huadong-1.xf-yun.com/v1/interact",//接口地址，无需更改
       },
       setglobalparamsform: {
@@ -367,7 +367,7 @@ export default {
         enable:false,//demo中用来控制是否开启背景的参数，与虚拟人参数无关
         background: {
           type: "res_key",//（非必传）上传图片的类型，支持url以及res_key。（res_key请到交互平台-素材管理-背景中上传获取)
-          data: "22SLM2teIw+aqR6Xsm2JbH6Ng310kDam2NiCY/RQ9n6dw47gMO+7gGUJfWWfkqD3IxsU/HMK1uJTTxxF2llcKSM4dlSdBy0Piag/DndHocqs32kTOwXUw6lkyggYQBXF0uwTv9jVFm1ZjZgSehV3kpx5RTvizZ9MqEI8lotCRvokC9HLI0pGfKtSmlKgCKL+OUoc9QI5HW3wLtYbLersumd4UCKEPk/uWAdKEh4ntSJiW2km8waGFsg/VSNFj5vaDK3LC4PxfsRvi1a2veZW7JUs/VOleE9wwgTH+A/oqPPcyksBY7aQ4TxYjvS9Qj9LtXkvOwttQMgPGwoxlqBEBhR/xLUwmecHkHzgjACFtxE=",
+          data: "22SLM2teIw+aqR6Xsm2JbH6Ng310kDam2NiCY/RQ9n6dw47gMO+7gGUJfWWfkqD3VRUASnpPTgZc9Sx9WWbPxkBGjSqGB4vHGz7EKmLghHzBtFUVrJMNj2bHWNr2c1Oylh37bqg3YF7t9IanX0E5kfqYj8UrnkCHoR7GFm4KaVaoLf2vRB/QfLBMNpJmiQLFaIt2htzAJqRqPVWT3L6cdqqUEoi9oqrj1dCc81qJKvu22oCrCqQwt93SI4kF1UzbD/bkv1JJnZx9QgEViqqSTGRYlwV+uF0o6kmNMJOtq9HP9f0Y+lY8qaHVZ1Cs1NevZBt9v/AmIl4M+UzdviZSX/ArgXujT6GKNWy14z058UQ=",
           //（非必传）图片的值，当type='url'时,data='http://xxx/xxx.png'，当type='res_key'时，data='res_key值'（res_key请到交互平台-素材管理-背景中上传获取)
         }
       },
@@ -375,7 +375,7 @@ export default {
       textarea: "",
       vc: "",
       recorderbutton: false,
-      nlp: false,
+      nlp: true,
       emotion:0,
       action:"A_RH_hello_O",
       volume:100,
