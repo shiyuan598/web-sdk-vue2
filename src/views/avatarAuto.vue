@@ -1,7 +1,7 @@
 <template>
   <div class="avatar">
     <el-container>
-      <el-aside width="220px" height="600px">
+      <el-aside v-if="showActions" width="220px" height="840px">
         <el-row>
           <el-button style="margin-bottom: 16px" @click="start()" type="primary"
             >Start</el-button
@@ -54,7 +54,24 @@
 
       <el-main class="htmleaf-content" style="padding: 0px">
         <div class="weather rain" id="wrapper"></div>
-        <span>透明度</span><input type="range" id="opacityRange" min="0" max="1" step="0.1" value="1">
+        
+        <template>
+          <el-button
+            style="margin: 0px"
+             @click="startRecord()"
+            type="primary"
+            >开始录音</el-button
+          >
+          <el-button
+            style="margin: 0px"
+            @click="showActions = !showActions"
+            type="primary"
+            >显示/隐藏操作栏</el-button
+          >
+        </template>
+        <div v-if="showActions">
+          <span>透明度</span><input type="range" id="opacityRange" min="0" max="1" step="0.1" value="1">
+        </div>        
       </el-main>
     </el-container>
   </div>
@@ -82,6 +99,7 @@ export default {
   name: "avatarComponent",
   data() {
     return {
+      showActions: false,
       SetApiInfodialog: false,
       SetGlobalParamsdialog: false,
       form: {
@@ -418,6 +436,7 @@ export default {
 }
 
 #wrapper {
+  min-height: 600px;
   height: 90%;
   width: 100%;
 }
