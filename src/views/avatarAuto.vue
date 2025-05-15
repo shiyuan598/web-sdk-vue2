@@ -58,9 +58,9 @@
         <template>
           <el-button
             style="margin: 0px"
-             @click="startRecord()"
+             @click="startAuto()"
             type="primary"
-            >开始录音</el-button
+            >开始</el-button
           >
           <el-button
             style="margin: 0px"
@@ -404,6 +404,10 @@ export default {
         type: "success",
       });
     },
+    startAuto() {
+        this.start();
+        this.startRecord();
+    }
   },
   mounted() {
     //实例化SDK
