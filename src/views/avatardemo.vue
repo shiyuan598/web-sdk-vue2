@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded",function(){
     const div = document.getElementById('wrapper');
     const range = document.getElementById('opacityRange');
 
-    range.addEventListener('input', function () {
+    range?.addEventListener('input', function () {
       div.style.opacity = this.value;
     });
 })
@@ -411,9 +411,9 @@ export default {
         .on(SDKEvents.stream_start, function () {
           console.log("stream_start");
         })
-        .on(SDKEvents.disconnected, function (err) {
-          console.log("SDKEvent.disconnected:", err);
-          if (err) {
+        .on(SDKEvents.disconnected, function (e) {
+          console.log("SDKEvent.disconnected:", e);
+          if (e) {
             // 因为异常 而导致的断开！ 此处可以进行 提示通知等
             console.error("ws link disconnected because of Error");
             console.error(e.code, e.message, e.name, e.stack);

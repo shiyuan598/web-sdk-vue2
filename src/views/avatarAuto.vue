@@ -3,11 +3,13 @@
     <el-container>
       <el-aside v-if="showActions" width="220px" height="840px">
         <el-row>
-          <el-button style="margin-bottom: 16px" @click="start()" type="primary"
-            >Start</el-button
+          <el-button style="width:160px; margin-bottom: 16px" @click="start()" type="primary"
+            >启动</el-button
           >
-          <el-radio v-model="nlp" :label="true">开启语义理解</el-radio>
-          <el-radio v-model="nlp" :label="false">关闭语义理解</el-radio>
+          <div class="nlp">
+            <div class="label">语义理解</div>
+            <el-switch v-model="nlp"></el-switch>
+          </div>
           <el-input
             type="textarea"
             placeholder="请输入内容,包括符号在内，最大2000字符"
@@ -17,10 +19,8 @@
             :autosize="{ minRows: 5, maxRows: 10 }"
           >
           </el-input>
-          <el-input v-model="vc" placeholder="变声"></el-input>
-          <el-input v-model.number="emotion" placeholder="情感系数"></el-input>
           <el-button style="margin: 0px" @click="writeText()" type="primary"
-            >文本驱动</el-button
+            >发送文本</el-button
           >
           <el-button style="margin: 0px" @click="interrupt()" type="primary"
             >打断</el-button
@@ -60,18 +60,18 @@
             style="margin: 0px"
              @click="startAuto()"
             type="primary"
-            >开始</el-button
+            >{{ isStarted ? "结束对话" : "开启对话" }}</el-button
           >
           <el-button
             style="margin: 0px"
             @click="showActions = !showActions"
             type="primary"
-            >显示/隐藏操作栏</el-button
+            >{{ showActions ? "隐藏" : "显示" }}操作按钮</el-button
           >
         </template>
-        <div v-if="showActions">
+        <div v-if="false">
           <span>透明度</span><input type="range" id="opacityRange" min="0" max="1" step="0.1" value="1">
-        </div>        
+        </div> 
       </el-main>
     </el-container>
   </div>
@@ -88,7 +88,7 @@ import AvatarPlatform, {
 document.addEventListener("DOMContentLoaded",function(){
     const div = document.getElementById('wrapper');
     const range = document.getElementById('opacityRange');
-    range.addEventListener('input', function () {
+    range?.addEventListener('input', function () {
       div.style.opacity = this.value;
     });
 })
@@ -99,6 +99,7 @@ export default {
   name: "avatarComponent",
   data() {
     return {
+      isStarted: false,
       showActions: false,
       SetApiInfodialog: false,
       SetGlobalParamsdialog: false,
@@ -160,8 +161,7 @@ export default {
           //（非必传）图片的值，当type='url'时,data='http://xxx/xxx.png'，当type='res_key'时，data='res_key值'（res_key请到交互平台-素材管理-背景中上传获取)
         }
       },
-      formLabelWidth: "120px",
-      textarea: "你好呀",
+      textarea: "你好呀，介绍一下数字人",
       vc: "",
       recorderbutton: false,
       nlp: true,
@@ -196,9 +196,9 @@ export default {
         .on(SDKEvents.stream_start, function () {
           console.log("stream_start");
         })
-        .on(SDKEvents.disconnected, function (err) {
-          console.log("SDKEvent.disconnected:", err);
-          if (err) {
+        .on(SDKEvents.disconnected, function (e) {
+          console.log("SDKEvent.disconnected:", e);
+          if (e) {
             // 因为异常 而导致的断开！ 此处可以进行 提示通知等
             console.error("ws link disconnected because of Error");
             console.error(e.code, e.message, e.name, e.stack);
@@ -324,11 +324,7 @@ export default {
           nlp: this.nlp,//是否开启语义理解
           tts: {
             volume: 100,
-          },
-          air:{//动作模式
-          air:1,//（非必传）是否开启自动动作，0关闭，1开启（需配合nlp=true时生效)，当开启时，星火大模型会根据语义理解的内容自动插入动作
-          add_nonsemantic:1//（非必传）是否开启无指向性动作，0关闭，1开启（需配合nlp=true时生效)，虚拟人会做没有意图指向性的动作
-        }
+          }
         });
       } else if (text != "" && this.vc != ""){
         avatarPlatform2.writeText(text, {
@@ -405,8 +401,15 @@ export default {
       });
     },
     startAuto() {
-        this.start();
-        this.startRecord();
+        if (!this.isStarted) {
+          this.start();
+          this.startRecord();
+        } else {
+          this.stop();
+          this.stopRecord();
+          this.destroy();
+        }
+        this.isStarted = !this.isStarted;
     }
   },
   mounted() {
@@ -435,10 +438,21 @@ export default {
 
 <style scoped>
 .el-button, .el-input, .el-textarea {
-  width: 200px;
-  margin-top: 16px !important;
+  margin-top: 8px !important;
+  margin-right: 8px !important;
 }
 
+.el-input, .el-textarea {
+  width: 200px;
+}
+.nlp {
+  display: flex;
+  justify-content: center;
+  color: #fff;
+}
+.nlp .label {
+  margin-right: 6px;
+}
 #wrapper {
   min-height: 600px;
   height: 90%;
